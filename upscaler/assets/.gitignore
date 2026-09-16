@@ -1,0 +1,4 @@
+# 运行时资源（不提交大文件）
+assets/bin/*.exe
+assets/bin/*.dll
+assets/models/*.bin

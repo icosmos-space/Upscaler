@@ -17,14 +17,20 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "upscaler",
-		Width:  1024,
-		Height: 768,
+		Title:     "Upscaler - 图像超分 💗 By TaceyWong",
+		Width:     1280,
+		Height:    900,
+		MinWidth:  1024,
+		MinHeight: 720,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		BackgroundColour: &options.RGBA{R: 9, G: 9, B: 11, A: 1},
 		OnStartup:        app.startup,
+		DragAndDrop: &options.DragAndDrop{
+			EnableFileDrop:     true,
+			DisableWebViewDrop: true,
+		},
 		Bind: []interface{}{
 			app,
 		},

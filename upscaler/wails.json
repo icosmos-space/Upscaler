@@ -7,7 +7,14 @@
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "王新勇(Tacey Wong)",
+    "name": "白昼寻星工作室",
     "email": "xinyong.w@gmail.com"
+  },
+  "info": {
+    "companyName": "白昼寻星工作室",
+    "productName": "图像超分",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 白昼寻星工作室",
+    "comments": "本地 AI 图像超分工具 · 白昼寻星工作室"
   }
 }
