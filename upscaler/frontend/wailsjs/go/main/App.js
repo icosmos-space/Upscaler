@@ -22,16 +22,16 @@ export function ListModels(arg1) {
   return window['go']['main']['App']['ListModels'](arg1);
 }
 
+export function LocalImageURL(arg1) {
+  return window['go']['main']['App']['LocalImageURL'](arg1);
+}
+
 export function OpenInExplorer(arg1) {
   return window['go']['main']['App']['OpenInExplorer'](arg1);
 }
 
 export function PathKind(arg1) {
   return window['go']['main']['App']['PathKind'](arg1);
-}
-
-export function ReadImageDataURL(arg1) {
-  return window['go']['main']['App']['ReadImageDataURL'](arg1);
 }
 
 export function ResolveDroppedPaths(arg1) {

@@ -29,7 +29,7 @@ import {
   ListModels,
   OpenInExplorer,
   PathKind,
-  ReadImageDataURL,
+  LocalImageURL,
   ResolveDroppedPaths,
   RunUpscale,
   SelectBin,
@@ -222,8 +222,8 @@ async function loadPairPreview(pair: main.ComparePair | undefined) {
   compareLoading.value = true
   try {
     const [before, after] = await Promise.all([
-      ReadImageDataURL(pair.before),
-      ReadImageDataURL(pair.after),
+      LocalImageURL(pair.before),
+      LocalImageURL(pair.after),
     ])
     beforeSrc.value = before
     afterSrc.value = after

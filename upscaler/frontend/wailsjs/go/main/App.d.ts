@@ -12,11 +12,11 @@ export function ListComparePairs(arg1:string,arg2:string):Promise<Array<main.Com
 
 export function ListModels(arg1:string):Promise<Array<main.ModelInfo>>;
 
+export function LocalImageURL(arg1:string):Promise<string>;
+
 export function OpenInExplorer(arg1:string):Promise<void>;
 
 export function PathKind(arg1:string):Promise<string>;
-
-export function ReadImageDataURL(arg1:string):Promise<string>;
 
 export function ResolveDroppedPaths(arg1:Array<string>):Promise<string>;
 

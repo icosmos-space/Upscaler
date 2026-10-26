@@ -2,13 +2,8 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"context"
-	"encoding/base64"
 	"fmt"
-	"image"
-	"image/jpeg"
-	_ "image/png"
 	"io"
 	"os"
 	"os/exec"
@@ -21,8 +16,6 @@ import (
 	"syscall"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
-	"golang.org/x/image/draw"
-	_ "golang.org/x/image/webp"
 )
 
 const (
@@ -77,11 +70,6 @@ type ComparePair struct {
 	Before string `json:"before"`
 	After  string `json:"after"`
 }
-
-const (
-	previewMaxEdge       = 2048
-	maxPreviewSourceBytes = 512 << 20 // 512 MiB：仅限制源文件读取上限
-)
 
 func NewApp() *App {
 	bin, models := resolveDefaultPaths()
@@ -272,71 +260,6 @@ func (a *App) ResolveDroppedPaths(paths []string) (string, error) {
 	return "", fmt.Errorf("请拖入图片（jpg/png/webp）或文件夹")
 }
 
-func (a *App) ReadImageDataURL(path string) (string, error) {
-	path = strings.TrimSpace(path)
-	if path == "" {
-		return "", fmt.Errorf("路径为空")
-	}
-	info, err := os.Stat(path)
-	if err != nil {
-		return "", err
-	}
-	if info.IsDir() {
-		return "", fmt.Errorf("不能预览文件夹")
-	}
-	if !isImageExt(filepath.Ext(path)) {
-		return "", fmt.Errorf("不是支持的图片格式")
-	}
-	if info.Size() > maxPreviewSourceBytes {
-		return "", fmt.Errorf("源文件过大（>%dMB），无法加载预览", maxPreviewSourceBytes>>20)
-	}
-
-	f, err := os.Open(path)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-
-	img, _, err := image.Decode(f)
-	if err != nil {
-		return "", fmt.Errorf("解码图片失败: %w", err)
-	}
-	img = resizeForPreview(img, previewMaxEdge)
-
-	var buf bytes.Buffer
-	if err := jpeg.Encode(&buf, img, &jpeg.Options{Quality: 88}); err != nil {
-		return "", fmt.Errorf("生成预览失败: %w", err)
-	}
-	return "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(buf.Bytes()), nil
-}
-
-func resizeForPreview(src image.Image, maxEdge int) image.Image {
-	bounds := src.Bounds()
-	w, h := bounds.Dx(), bounds.Dy()
-	if w <= 0 || h <= 0 {
-		return src
-	}
-	long := w
-	if h > long {
-		long = h
-	}
-	if long <= maxEdge {
-		return src
-	}
-	scale := float64(maxEdge) / float64(long)
-	nw := int(float64(w)*scale + 0.5)
-	nh := int(float64(h)*scale + 0.5)
-	if nw < 1 {
-		nw = 1
-	}
-	if nh < 1 {
-		nh = 1
-	}
-	dst := image.NewRGBA(image.Rect(0, 0, nw, nh))
-	draw.CatmullRom.Scale(dst, dst.Bounds(), src, bounds, draw.Over, nil)
-	return dst
-}
-
 func (a *App) ListComparePairs(inputPath, outputPath string) ([]ComparePair, error) {
 	inputPath = strings.TrimSpace(inputPath)
 	outputPath = strings.TrimSpace(outputPath)
@@ -436,17 +359,6 @@ func isImageExt(ext string) bool {
 		return true
 	default:
 		return false
-	}
-}
-
-func mimeFromExt(ext string) string {
-	switch strings.ToLower(ext) {
-	case ".jpg", ".jpeg":
-		return "image/jpeg"
-	case ".webp":
-		return "image/webp"
-	default:
-		return "image/png"
 	}
 }
 
